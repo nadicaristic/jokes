@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cas 28.03.2022</title>
+  <style>
+    body {
+      background-color: rgb(198, 221, 243);
+    }
+
+    .joke-card {
+      border: 0.5px solid #ffffff;
+      border-radius: 5px;
+      padding: 0.5rem;
+      font-size: 20px;
+      font-family: 'Times New Roman', Times, serif;
+      color: rgb(8, 8, 8);
+    }
+
+    button {
+      text-align: center;
+      border: 2px solid #dfd4d4;
+      border-radius: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      color: rgb(255, 253, 253);
+      background-color: rgb(53, 66, 141);
+      font-weight: bold;
+      margin: 3px;
+      text-decoration: none;
+      display: inline-block;
+      padding: 8px 16px;
+    }
+
+    button:hover {
+      background-color: rgb(250, 251, 252);
+      color: black;
+    }
+
+    .like {
+      background-color: white;
+      color: black;
+    }
+
+    .like:hover {
+      background-color: white;
+      cursor: pointer;
+
+    }
+
+    h1 {
+      color: rgb(53, 66, 141);
+      font-family: 'Times New Roman', Times, serif;
+    }
+  </style>
+</head>
+
+<body style="text-align: center">
+  <div class="container">
+    <h1>Start the day with smile. &#128515;</h1>
+    <button onclick="previous()" id="previous">Previous</button>
+    <button onclick="next()" id="next">Next</button>
+    <button onclick="showLikedJokes()" id="liked">Show liked jokes &#10084;</button>
+    <div class="search-result" id="result"></div>
+
+  </div>
+  <script>
+    const result = document.getElementById("result");
+    let jokes = [];
+    function getJokes() {
+      fetch("https://v2.jokeapi.dev/joke/Any?amount=10")
+        .then((res) => res.json())
+        .then((data) => {
+          jokes = data.jokes;
+          console.log(data);
+          showJokes(jokes);
+        })
+        .catch((err) => console.log(err));
+
+    }
+    getJokes();
+    function showJokes(jokes) {
+      result.innerHTML = '';
+      jokes.forEach((joke) => {
+        const html = `
+            <div class="joke-card">
+              ${joke.joke
+            ? `<p>${joke.joke}</p>`
+            : `<p>${joke.setup} </p>
+                    <p>${joke.delivery}</p>`
+          }
+              <button onclick="likeJoke('${joke.id}',this)" class="like" > &#10084; </button>
+              </div> `;
+
+        result.innerHTML += html;
+      });
+    }
+
+    function previous() {
+      result.innerHTML = 'Loading...'
+
+      getJokes();
+
+    }
+
+    function next() {
+      result.innerHTML = 'Loading...'
+      getJokes();
+
+    }
+
+    let likedJokes = [];
+
+    function likeJoke(id, thisButton) {
+      if (thisButton.style.color === 'black' || thisButton.style.color === "") {
+        thisButton.style.color = "red"
+      } else {
+        thisButton.style.color = "black"
+      }
+     
+      let joke = jokes.find(joke =>{ return joke.id === parseInt(id)})
+      if (!likedJokes.find(joke => {return joke.id === parseInt(id)})) {
+        likedJokes.push(joke);
+  
+      }
+      console.log(joke);
+    }
+
+    // let btn = document.getElementById('liked');
+
+    // btn.addEventListener('click', function onClick() {
+    //   btn.style.backgroundColor = 'white';
+    //   btn.style.color = 'red';
+    // });
+
+    let showLiked = [];
+    function showLikedJokes() {
+      showJokes(likedJokes);
+
+
+    }
+
+  </script>
+</body>
+
+</html>
